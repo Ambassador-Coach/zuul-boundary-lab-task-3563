@@ -1,5 +1,5 @@
 schema: testrade.integration_subject.shadow.v1
-object_id: task-3563-baseline
-manifest_revision: baseline-v1
+object_id: task-3563-C
+manifest_revision: C-v1
 result: pass
 sleep_seconds: 1
