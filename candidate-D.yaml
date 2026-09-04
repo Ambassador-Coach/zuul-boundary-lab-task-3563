@@ -1,0 +1,5 @@
+schema: testrade.integration_subject.shadow.v1
+object_id: task-3563-D2
+manifest_revision: D2-v1
+result: pass
+sleep_seconds: 25
