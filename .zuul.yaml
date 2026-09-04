@@ -1,3 +1,46 @@
+- pipeline:
+    name: shadow
+    description: TASK-3563 dependent scheduler with MQTT-only reporting.
+    manager: dependent
+    trigger:
+      github:
+        - event: pull_request
+          action:
+            - opened
+            - changed
+            - reopened
+    enqueue:
+      mqtt:
+        topic: task-3563/{tenant}/{pipeline}/{project}/{change}
+        qos: 2
+        include-returned-data: true
+    start:
+      mqtt:
+        topic: task-3563/{tenant}/{pipeline}/{project}/{change}
+        qos: 2
+        include-returned-data: true
+    success:
+      mqtt:
+        topic: task-3563/{tenant}/{pipeline}/{project}/{change}
+        qos: 2
+        include-returned-data: true
+    failure:
+      mqtt:
+        topic: task-3563/{tenant}/{pipeline}/{project}/{change}
+        qos: 2
+        include-returned-data: true
+    dequeue:
+      mqtt:
+        topic: task-3563/{tenant}/{pipeline}/{project}/{change}
+        qos: 2
+        include-returned-data: true
+    window: 20
+    window-floor: 1
+    window-increase-type: linear
+    window-increase-factor: 1
+    window-decrease-type: exponential
+    window-decrease-factor: 2
+
 - job:
     name: task-3563-shadow
     parent: base

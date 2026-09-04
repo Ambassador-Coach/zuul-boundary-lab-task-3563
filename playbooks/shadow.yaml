@@ -9,6 +9,13 @@
       ansible.builtin.set_fact:
         task_3563_manifest: "{{ task_3563_manifest_raw.content | b64decode | from_yaml }}"
 
+    - name: Hash the exact candidate manifest
+      ansible.builtin.stat:
+        path: "{{ zuul.project.src_dir }}/candidate.yaml"
+        checksum_algorithm: sha256
+        get_checksum: true
+      register: task_3563_manifest_stat
+
     - name: Expose identity and frozen graph evidence
       ansible.builtin.debug:
         msg:
@@ -29,6 +36,7 @@
           task_3563:
             object_id: "{{ task_3563_manifest.object_id }}"
             manifest_revision: "{{ task_3563_manifest.manifest_revision }}"
+            manifest_sha256: "{{ task_3563_manifest_stat.stat.checksum }}"
             graph_revision: "{{ task_3563_graph_revision }}"
 
     - name: Apply the synthetic terminal result
