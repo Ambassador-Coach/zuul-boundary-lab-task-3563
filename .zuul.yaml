@@ -1,0 +1,14 @@
+- job:
+    name: task-3563-shadow
+    parent: base
+    description: Stock Zuul non-authoritative scheduler boundary probe.
+    run: playbooks/shadow.yaml
+    vars:
+      task_3563_graph_revision: graph-v1
+
+- project:
+    name: Ambassador-Coach/zuul-boundary-lab-task-3563
+    queue: task-3563-shadow
+    shadow:
+      jobs:
+        - task-3563-shadow
