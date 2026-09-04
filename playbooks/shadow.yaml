@@ -1,0 +1,38 @@
+- hosts: all
+  tasks:
+    - name: Read the immutable candidate manifest
+      ansible.builtin.slurp:
+        src: "{{ zuul.project.src_dir }}/candidate.yaml"
+      register: task_3563_manifest_raw
+
+    - name: Decode the candidate manifest
+      ansible.builtin.set_fact:
+        task_3563_manifest: "{{ task_3563_manifest_raw.content | b64decode | from_yaml }}"
+
+    - name: Expose identity and frozen graph evidence
+      ansible.builtin.debug:
+        msg:
+          object_id: "{{ task_3563_manifest.object_id }}"
+          manifest_revision: "{{ task_3563_manifest.manifest_revision }}"
+          graph_revision: "{{ task_3563_graph_revision }}"
+          zuul_project: "{{ zuul.project.canonical_name }}"
+          zuul_change: "{{ zuul.change }}"
+          zuul_patchset: "{{ zuul.patchset }}"
+
+    - name: Hold the job for the requested bounded interval
+      ansible.builtin.pause:
+        seconds: "{{ task_3563_manifest.sleep_seconds | int }}"
+
+    - name: Return correlation evidence to the stock MQTT reporter
+      zuul_return:
+        data:
+          task_3563:
+            object_id: "{{ task_3563_manifest.object_id }}"
+            manifest_revision: "{{ task_3563_manifest.manifest_revision }}"
+            graph_revision: "{{ task_3563_graph_revision }}"
+
+    - name: Apply the synthetic terminal result
+      ansible.builtin.assert:
+        that:
+          - task_3563_manifest.result == 'pass'
+        fail_msg: "TASK-3563 intentional synthetic failure"
